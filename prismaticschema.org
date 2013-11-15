@@ -1,0 +1,144 @@
+* Schema
+
+What it's like to read 'fresh' clojure
+
+What do the various params of an fn does.
+
+It takes a while to figure out from fresh code.
+
+It takes a little bit of time even for simple code
+
+"manual apropos"
+
+** Clojure in teams
+
+What makes clojure great to write can make it difficult to read
+
+** Why not a doc string?
+
+A little bit better? 
+
+It's better than reading the source all the time.
+
+Code changes faster than docs... zero validation.
+
+Lots of ways to describe the same shared structure
+
+** schema
+
+Encode the domain objects you are working with 
+
+Why not records? Nested data structures.
+
+
+** Validation
+
+So far it's just glorified formal documentation
+
+Validation - at the repl you can say "schema please validates that
+this schema is happy with the data"
+
+(schema/validate ...) returns the value if it's ok else an
+informative exception - runtime exception. "
+
+Can turn on validation for functions, ns and globally.
+
+Can turn it on just for tests etc.
+
+** Heard of static typing?
+
+Types are useful for some things.
+
+But that's not what you want - the client of a namespace to
+understand *how* stuff works quickly... don't want to make everything
+typed. More to undestand the interface of the namespace.
+
+Can go at the top of it.
+
+** s/defn to show 'public part of ns'
+
+This was an important decision for team productivity. Having all the
+functions that need to be used with defrecords and stuff.
+
+** Schemas are also data
+
+Declarative and data oriented
+
+Can do datastructure operations on your schemas.
+
+** Clojure + clojurescript
+
+** Basic cases
+
+Can validate base stuff: (s/validate s/Number 41) 
+
+Uses s/Number so we can work in clojure + clojurescript
+
+In clojure: can validate that something is a class
+
+In clojurescript you can vlidate against proto functions.
+
+** Sequence schemas
+
+Can check for homogenous seq of strings.
+
+Or a pair of string/number
+
+Schemas are data so you can write functions to gen schemas
+
+** Function schema
+
+Can get schema from function , return type and then args.
+
+Can use to pull out of computational graph to see the function schema.
+
+** Schema sequence
+
+** Map schemas
+
+** Schema predicates
+
+Can make a schema from fn (s/pred prime?) for example. Only works on
+primes...
+
+In contrast to type system there is no guarentee this kinda thing
+would return.
+
+But good to represent stuff that's difficult to represent by tasks.
+
+Ranges and constraints
+
+** Schema algebra
+
+(s/both  => Satisifies all schemas
+
+s/either => satisfies either 
+
+(s/maybe => nill or satisfied
+
+** Schema record
+
+schema on keys
+
+** Extensions
+
+Schema is at heart a protocol - chek and explain
+
+** Regex example
+
+** Schema client 
+
+Generate objectivec classes from schema... or java code
+
+
+** Many more
+
+core.typed annotations... there are things in schema that can't be
+valid core.typed 
+
+But can write schema scheams to test whether using core.typed
+conformant stuff
+
+Generating stuff... 
+
+

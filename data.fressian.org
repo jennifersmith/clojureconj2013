@@ -1,0 +1,206 @@
+* Stuart Halloway  - data.fressian
+
+Existing binary protocols not going to work for datalog
+
+All the different requirements of datomic - transactions, logs
+etc. would they all need different protocols. Data in motion, data in
+rest.
+
+Came out of this with a format called fressian.
+
+** Not serialization
+
+Don't like the word serialization for this. 
+
+When talk about serialization, objects are driving. "Got some great
+objects, need to stuff them somewhere".
+
+Serialization gets into object graphs, reference etc. Didn't need
+this for datomic. If you need this, you want that as a separate layer
+above
+
+** Data encoding
+
+Encoding drives it. If someone comes to this 6 years from now what
+they gonna have. Just the data.
+
+"consumers understand everything" as requirement - want to be able to
+understand it.
+
+*** Hessian
+
+Nearly got there with hessian. Self describing serz types (no
+external schema), language independent. Single pass read. Fast... 
+
+Came strongly from the java space - so has stuff like supporting EJB.
+
+*** Fressian - refreshed hessian
+
+*** edn is like fressian
+
+fressian ideas similar to edn ideas. The design work that lead to edn
+was actually done for fressian.
+
+*** If they are so similar, why do they have so much in common?
+
+Performance.
+
+Binary, Byte-code driven. Fressian is primitive-aware. Clojure not a
+private island, needs to be aware of the platform operating on. On
+jvm, the numbers are pretty important :)
+
+domain-specific compression. When you know about your domain, you can
+write a small piece of code that compresses your data. Writers can do
+this, but you don't need specific custom reader.
+
+** Sufficiency then efficiency.
+
+Have to keep the goals in mind. 
+
+Goal of language neutrality makes a lot of tools out there not
+applicable. Java, javascript etc. specific. If you dont start with
+lang neutrality assumption, you wont get there.
+
+"rich types" : json doesnt have rich set of types, types not
+extensible. You have to do extra work to get your types back. 
+Ends up being done at the edges of of different programs - in adhoc
+way. 
+
+Want to be extensible, but not entirely arbitrarily otherwise you
+stop readers reading it. So someone who doesn't want 'to play' doesnt
+need to know.
+
+"Self describing": We don't want an out of band understanding. Fine
+in certain circumnstances, can get some performance gains in it.
+
+If you have to have out of band communication. Also stateful - if I
+want to undestand your message X then I need to have received message
+Y.
+
+Not that the other things are bad, they just fail our requirements
+
+** Efficiency tricks
+
+add primitive/array support.
+
+using bytecode langs are efficient.
+
+packed encoding: 0-63 all encoding to "the int which is me" - so
+carry typed information in being a number
+
+chunked encoding: need to work in a streaming context. 64K
+chunks. Can process arbitrarily huge things without worrying
+
+domain-aware caching: superpower
+
+** Basics
+
+FressianWriter in java. readerObject writerObject... plus tagging
+support. Can add a name to stuff.
+
+Streaming writers : beginClosedList/endList caching subdomains?
+
+** New types from old
+
+Used to write 'big decimals'
+
+WriteHandler ??
+
+** Primitives
+
+If you dont have a handler for it... then you get back a "Tagged" . 
+
+"I am a tagged value with this name and these pieces"
+
+Stops intermediaries having to understand things
+
+** domain level caching
+
+writer chooses what to cache. "Write this cached". When we see the
+data structure again we can use the cache code.
+
+Fully generic from pov of readers - caching baked in and the writers
+just choose what is cached.
+
+Depends on what you cache - you can get compression proportional to
+your own knowledge of your own data.
+
+domain caching > generic compression
+
+** caching
+
+Write method with a 'cache' flag.
+
+Can also have an object that knows what to cahce.
+
+*** Example datoms
+
+How can you efficiently store the time with every datom... 
+
+When you write a datomic datom, the time is cached. cos everything
+has the same time in the transaction.
+
+** data.fressian
+
+idiomatic clojure reference impl
+
+built in handlers for clojure data
+
+domain compression for defrecords - both for effiency and for a
+template
+
+*** "Simple and easy" (Not "simple and screw you")
+
+Can compose fressian by adding your own handlers
+
+** clojure types
+
+reads back to persistent data structures
+
+handlers for keyword, symbol ratio
+
+bigint
+
+*** defrecord write handler
++ write side: caching class names and keys
++ read side: we read the type, we see if it exists otherwise return
+  tagged object.
+
+If you dont like this, replace this handler with one that just dumbs
+it down to a map.
+
+The decision making decoupled from reader and the writer.
+
+** Extension
+
+Keyed by type name.
+
+Can decide to cache a particular value in a record (say if it is
+always a keyword).
+
+** Byte code overview
+
+On the wiki. packed + chunked representations... 
+
+** Help wanted!
+
+Review of the inital implementation 
+metadata - handling metadata on stuff... challenge on how you
+represent it - how do you genericise it.
+ref impl in java: couldn't tolerate in some settings the overhead of
+clojure itself.
+
+Maybe need more lightweight clojures... maybe like clojuescript
+does. Then could have written in clojure.
+
+** To sum it up
+
+fressian: binary data, clojure style
+
+** Don't make clojure a private island!
+
+Language driven decisions narcissitic. 
+
+Not designed to be private island - by building tools and approaches
+that assume clojure end 2 end
+

@@ -1,0 +1,4 @@
+* core.async
+
+Submitted abstract before even wrote core.async!
+

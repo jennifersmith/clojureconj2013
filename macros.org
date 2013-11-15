@@ -1,0 +1,35 @@
+* "illuminated macros"
+
+** Macro = compiler hook
+
+Hook into compiler to do arbitrary code. Whatever that is, it returns
+more code. Macro arbitraty compiler.
+
+We say they output clojure but not really the same. Input is macro
+that undestarnds macro foo, and outputs code that doesnt understand
+macro foo cos expanded
+
+macro = function
+
+work better when they are pure functions
+
+Functions do three things : collect input, compute and emit
+
+** illuminated macros
+
+syntax documentation  - look at macro and be able to know how to use
+it. Railroad diags? erorrs messages
+
+visualisation of parsing - which bit of my result came from input
+
+** defn macro
+
+If a dsl doesnt have an escape... mayby you are triapped.
+
+
+* Clojure - syntax errors
+
+Erors: tells you what hwhen wrong with macros, but confusiong stack trce
+
+
+e

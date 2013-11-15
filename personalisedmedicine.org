@@ -1,0 +1,58 @@
+* personalised medicine
+
+INR - therepeutic range for wafarin doses
+
+Vanderbilt etc. supposed genetic link .
+
+Captured dna daata from patients and analysed the dosage.
+
+** 10 years later
+
+Dont always know your genotypes when dr prescribing warfarin
+
+PREDICT : Clinical program to genotype patients - give information on genotypes
+and implciations for the drugs
+
+Doing same with other drugs too 
+
+** "Cancer space"
+
+Different program - same outcomes, different data. Biopsied malignant
+tissue - better chemo agents.
+
+** Process
+
+creates an order, creates a blood specimen collection: sent to
+moelcuar diagnostics, genotyping, and qc on results.
+
+* Time to code
+Not miuch.
+Went with 'bread and butter ' ror.
+
+"Precious stone"
+
+* Leaving rails
+
+"Seen the functional light"
+
+Project incompat... Rails good for it's usecases... can't make
+changes all the time.
+
+* Clojure application
+
+- replaced rails with clojure (kept erlang)
+
+* Roundtrip research
+
+Research is an agonisingly slow process to make a difference.
+
+Hyopthesis went from researc lab all the way to clinical impact.
+
+* PREDICT challenges
+
+Funding - similar to  many research projects 
+
+Moving target - the work for a drug could lose its relevance if
+something comes back
+
+patience awareness. genotyping puts off a lot of people - privacy etc
