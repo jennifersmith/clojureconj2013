@@ -2,3 +2,220 @@
 
 Submitted abstract before even wrote core.async!
 
+Starting from primitives build up.
+
+
+** Channels
+
+Lowest level primitive.
+
+unbuffered
+
+Communication point for two logical threads to communicate stuff.
+
+Unbuffered makes it a synchronisation 
+
+*** take!
+
+take gives us ability to add callback
+
+*** put!
+
+*** callbacks
+
+1 callback gets one value then thrown away.
+
+When put! when the val is picked up, thrown away
+
+*** callbacks on put!
+
+Execute this CB when done putting
+
+
+Can work with these channels with callbacks etc.
+
+But now we are in callback hell... 
+
+It would be nice if we could turn into something that looks more like
+normal clojure
+
+*** 'takep'
+
+Use promise to lock the current thread while waiting to deliver on
+promise.
+
+(future... to fire it off
+
+Can do same with a put
+
+This is exactly how the blocking put and take work ! 
+
+As in >!! and <!!
+
+<!! is 'take blocking' arrow going the way the data is going. First
+exclamation says sideaffecting, second says it is blocking
+
+Future returns a promise. Can we return a channel?
+
+(thread  does this  by sending the value back thru the channel
+
+This is well and good, but we are running in actual os thread. 
+
+Wouldn't it be nice if we had benefits of callbacks and clojure style
+
+This is what (go does
+
+Why is it <! not <!! 
+
+The blocking take <!! uses a promise. Well that would cause thread to
+block.
+
+"parking take" vs "blocking take"
+
+go: Takes the body of code and turns into a state machine
+
+macroexpand-1 massive , but jit optimised and eventually pretty fast.
+
+All the code in the go block are going to turn into code blocks.
+
+But all the stuff you would expect to do works.
+
+even try/finally/catch !
+
+** Buffered channels
+
+create with int, creates buffered channel of that size.
+
+The first value to put in, if any takers give to them... otherwise
+buffer.
+
+So put succeeds instantly.
+
+But second doesnt as buffer is now full... so it parks
+
+Once the first val is put, the second is unparked
+
+*** Backpressure
+
+Allows the producer to run a little ahead, but if the producer runs a
+little more ahead than needed, it will block (cos buffer is full)
+
+*** dropping-buffer
+
+Will just throw the next value
+
+*** sliding buffers
+
+sliding window over the values (so discards first one as it moves
+along window)
+
+** close a channel
+
+(close c)
+
+take will return nil - signal that we are closed
+
+** alt
+
+Two channels, use alt to take from more than one
+
+ Returns the value and the chan gt it from
+
+** Channel called a timeout
+
+give it  time, after a time it closes.
+
+** alts + timeout = take with timeout
+
+(alts!! [a (timeout 1000)])
+
+wait for stuff on a, for 1 sec max
+
+** Can do puts with alts too !
+
+** Provide defaults for alts
+
+non-blocking take
+
+** alts are in random order by default
+
+If we always we did in same order, could starve some channels and
+others become full
+
+** what can we build?
+
+*** Logging : debugging multithread code
+
+"Single threaded access to a shared resource" - log channel, thread
+just loops taking from channel till closed, println
+
+No overlapping printlns!
+
+*** Thread pool service
+
+channel, function to do, number of threads with timeout
+
+
+*** HTTP async
+
+httpkit
+
+async http
+
+(http-get - gets uri from channel and then sticks on channel -
+returns channel so you can take from it
+
+*** async/map
+
+Given a fn and a sequence of channels, going to take from each , fn
+and then return channel (I think!)
+
+If we need to contact multi urls, can get better performnce. compare
+reading 10 urls in order, vs http-get
+
+** mult
+
+single put normally to single take
+
+create a (mult ... that looks at a channel
+
+Anything given to mult broadcast to all the taps  (tap fn
+
+closing mult, closes subscribers
+
+** Express program as trees of channels and processes
+
+** Pubsub
+
+is like mult with multimethods
+
+(pub channel :tag)
+
+** Actors
+
+shouldnt be concerned with whether better or worse. Should be
+concenred about using the best tool.
+
+Lang shouldn't restrict you to one paradigm
+
+Best feature of clojure is you can choose multiple models
+
+** Think about the tradeoffs 
+
+What are the tradeoffs and which is my best fit
+
+** Clojure script
+
+All the callbacks sound a bit clojurescript
+
+"green threads"
+
+Makes animation dead easy
+
+A lot of the code (bar the interop) just ports pretty well.
+
+** thread vs go
+
+use go for cpu heavy stuff, thread for io stuff
+
+

@@ -1,0 +1,117 @@
+* Cascalog 2.0
+
+"Datalog in realtime"
+
+Make cascalog work for smaller data and models that are not hadoop.
+
+** Agenda
++ What is cascalog
++ Why logic programming
++ How cascalog compiles down into MR
++ Different comp targets
+
+** What is cascalog
+
+A data DSL in clojure that helps you write (up till now) hadoop
+
+Express as facts and let logic figure it out - let it write the
+analytics for you.
+
+Hadoop support = petabyte scale ETL + analysis... effectively not
+constrained
+
+Problem is hadoop only... often you want scalability without the
+hadoop. 
+
+** Example
+
+Express as constraints, - relations? 
+
+** Cascalog query
+*** "subquery" <-
+(<- output vars
+    constraints)
+
+the constraints can be generators, operations, agg, fitters.
+
+For word count, creating constraints for ?word and ?count
+
+(gen ?text ) = the text field is constrained for coming out of the
+generator
+
+The subquery is a generator that can be used in other subqueries
+
+*** predicate
+
+[operations Inputs outputs]
+
+"give system a bag of these and it figure out what to do"
+
+
+** Example: find full name of everyone following someone under 30
+
+Feels a little like sql
+
+output of query : full name
+
+(follows produces ?follower ?person) etc. just facts about what comes
+from where
+with constraint tht ?age is less than 30
+
+Order doesnt matter. They are just facts.
+
+
+** Easy to play with
+
+Can take existing code and model it that way
+
+** abstraction layer
+
+clojure->cascading->hadoop
+
+Is there anything about datalog that is specific to hadoop.
+
+Can we target other stuff? Spark? Storm?
+
+Could imagine running on a live stream on storm.
+
+** New compiler
+
+** "Design of Design" - Fred Brooks
+
+Design should tell what properties you need, rather than how they
+should be achieved.
+
+** Compiler
+
+builds a tree starting with things it can apply first, looks for joins
+
+Graph is declaration of intent.
+
+Why cant we do this in the browser? In memory? Prep data to push into
+incanter.... or realtime
+
+** New picture
+
+datalog -> logical plan -> optimizers
+
+compiling to hadoop doesn't have to be that fast... job prep.
+
+Implement protocols to build new platforms
+
+** Possible platforms
+
++ "Cascalog in the small" : Native clojure
++ ClojureScript
++ core.async
++ storm - taking the same code running on hadoop or on storm
+
+** Takeaways
+
++ Let the system reduce complexity for you... premature optimisation?
+  want system to do as much of the obsessing 
++ Use the properties of your data
++ Share data by sharing code? trust as much as you can the logic
+  program and rest will follow.
+
+
